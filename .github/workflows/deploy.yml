@@ -1,10 +1,11 @@
-name: Tests
+name: Deploy Docs
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Tests"]
     branches: ["main"]
-  pull_request:
-    branches: ["main"]
+    types:
+      - completed
 
 permissions:
   contents: read
@@ -24,18 +25,6 @@ jobs:
         with:
           deno-version: v1.x
 
-      - name: Verify formatting
-        run: deno fmt --check
-
-      - name: Run linter
-        run: deno lint
-
-      - name: Run tests
-        run: deno task test
-
-      - name: Run benchmarks
-        run: deno task bench
-
       - name: Build docs
         run: |
           cd docs
@@ -52,3 +41,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
+
